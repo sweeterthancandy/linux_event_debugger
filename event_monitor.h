@@ -1,6 +1,6 @@
 #pragma once
 
-#include "aux.h"
+#include <boost/signals2/signal.hpp>
 
 //struct input_event {
 	//struct timeval time;
@@ -10,6 +10,10 @@
 //};
 
 struct event_monitor : std::enable_shared_from_this<event_monitor>{
+
+        using sig_t = void(const std::string&,const struct input_event&);
+        using signal_t = boost::signals2::signal<sig_t>;
+
         explicit event_monitor(boost::asio::io_service& io, const std::string& dev)
                 :io_(io)
                 ,work_(io) // keep alive
@@ -27,6 +31,9 @@ struct event_monitor : std::enable_shared_from_this<event_monitor>{
         void stop(){
                 desc_.cancel();
         }
+        boost::signals2::connection connect(const signal_t::slot_type& sub){
+                return sig_.connect(sub);
+        }
 private:
         void start_read(){
                 auto self = shared_from_this();
@@ -37,16 +44,10 @@ private:
                                  
                                 } else {
                                         assert( n == sizeof(struct input_event) && "unexpected read size");
-                                        on_read( *reinterpret_cast<struct input_event*>(ev_buffer_.data()));
+                                        sig_(dev_, *reinterpret_cast<struct input_event*>(ev_buffer_.data()));
                                         start_read();
                                 }
                 });
-        }
-        void on_read(struct input_event& ev){
-                std::stringstream sstr;
-                sstr << dev_ << " - ";
-                sstr << input_event_to_string(ev,aux::colour_formatter());
-                std::cout << sstr.str() << std::endl;
         }
 private:
         boost::asio::io_service& io_;
@@ -54,4 +55,6 @@ private:
         boost::asio::posix::stream_descriptor desc_;
         std::string dev_;
         boost::array<char,sizeof(struct input_event)> ev_buffer_;
+
+        signal_t sig_;
 };

@@ -197,7 +197,7 @@ namespace linux_event_to_string_detail{
 }
 
 template<class colour_formatter>
-std::string input_event_to_string(struct input_event& ev, colour_formatter&& formatter){
+std::string input_event_to_string(struct input_event const& ev, colour_formatter&& formatter){
 
         namespace detail = linux_event_to_string_detail;
         std::string type_s( detail::type_to_string(ev.type));

@@ -20,8 +20,10 @@
 #include <boost/program_options.hpp>
 
 
-#include "linux_event_to_string.h"
 #include "event_monitor.h"
+
+#include "linux_event_to_string.h"
+#include "aux.h"
 
 
 
@@ -35,6 +37,13 @@ int main(int argc, char** argv){
 
                 std::vector<std::shared_ptr<event_monitor> > monitors;
 
+                auto printer = [](const std::string& dev, const struct input_event& ev){
+                        std::stringstream sstr;
+                        sstr << dev << " - ";
+                        sstr << input_event_to_string(ev,aux::colour_formatter());
+                        std::cout << sstr.str() << std::endl;
+                };
+
                 for(bf::directory_iterator iter("/dev/input/"),end;iter!=end;++iter){
                         auto p = iter->path();
                         auto dev = p.filename().string();
@@ -44,6 +53,7 @@ int main(int argc, char** argv){
                         {
                                 auto sptr = std::make_shared<event_monitor>(io, iter->path().string());
                                 sptr->start();
+                                sptr->connect( printer );
                                 monitors.emplace_back(sptr);
                         }
                 }
