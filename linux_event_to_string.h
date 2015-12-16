@@ -231,7 +231,7 @@ std::string input_event_to_string(struct input_event const& ev, colour_formatter
                 #undef AUX
                 #undef AUX_SEQ
                 default:
-                        code_s = boost::lexical_cast<std::string>(ev.code);
-                        break;
+                        return make_it(type_s, boost::lexical_cast<std::string>(ev.code), value_s );
         }
+        assert(0);
 }
