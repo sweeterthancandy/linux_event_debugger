@@ -1,3 +1,16 @@
+#pragma once
+
+// patch old headers
+#ifndef ABS_MT_TOOL_X
+        #define ABS_MT_TOOL_X		0x3c	/* Center X tool position */
+#endif
+#ifndef ABS_MT_TOOL_Y
+        #define ABS_MT_TOOL_Y		0x3d	/* Center Y tool position */
+#endif
+#ifndef MSC_TIMESTAMP
+        #define MSC_TIMESTAMP		0x05
+#endif
+
 namespace linux_event_to_string_detail{
 
 
@@ -14,14 +27,12 @@ namespace linux_event_to_string_detail{
                 ((EV_FF)("EV_FF"))\
                 ((EV_PWR)("EV_PWR"))\
                 ((EV_FF_STATUS)("EV_FF_STATUS"))\
-                ((EV_MAX)("EV_MAX"))\
         
         #define SYN_EVENTS\
                 ((SYN_REPORT)("SYN_REPORT"))\
                 ((SYN_CONFIG)("SYN_CONFIG"))\
                 ((SYN_MT_REPORT)("SYN_MT_REPORT"))\
                 ((SYN_DROPPED)("SYN_DROPPED"))\
-                ((SYN_MAX)("SYN_MAX"))\
 
 
 
@@ -160,7 +171,6 @@ namespace linux_event_to_string_detail{
                 ((MSC_RAW)("MSC_RAW"))\
                 ((MSC_SCAN)("MSC_SCAN"))\
                 ((MSC_TIMESTAMP)("MSC_TIMESTAMP"))\
-                ((MSC_MAX)("MSC_MAX"))\
 
         #define AUX(r,impl,elem) \
                 case BOOST_PP_SEQ_ELEM(0,elem): \
